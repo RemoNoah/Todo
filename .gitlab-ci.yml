@@ -1,0 +1,65 @@
+stages:
+  - lint
+  - build
+  - test
+
+default:
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  before_script:
+    - apt-get update -y
+    - apt-get install -y npm
+
+workflow:
+  rules:
+    - changes:
+        - Documents/**/*
+        - Backend/GradeTracker/**/*
+        - Frontend/**/*
+        - .gitlab-ci.yml
+
+lint:backend:
+  stage: lint
+  rules:
+    - changes:
+        - Backend/GradeTracker/**/*
+  script:
+    - cd Backend/GradeTracker
+    - dotnet format GradeTracker.sln --verify-no-changes
+
+lint:frontend:
+  stage: lint
+  rules:
+    - changes:
+        - Frontend/**/*
+  script:
+    - cd Frontend
+    - npm install --legacy-peer-deps
+    - npm run lint
+
+build:backend:
+  stage: build
+  rules:
+    - changes:
+        - Backend/GradeTracker/**/*
+  script:
+    - cd Backend/GradeTracker
+    - dotnet build
+
+test:backend:
+  stage: test
+  rules:
+    - changes:
+        - Backend/GradeTracker/**/*
+  script:
+    - cd Backend/GradeTracker
+    - dotnet test
+
+test:frontend:
+  stage: test
+  rules:
+    - changes:
+        - Frontend/**/*
+  script:
+    - cd Frontend
+    - npm install --legacy-peer-deps
+    - npm run test
