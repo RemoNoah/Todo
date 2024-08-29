@@ -21,7 +21,7 @@ public static class DataAccessSetupExtensions
     {
         string? connectionString = configuration.GetConnectionString("Default"); // Get connection string from config for own Db
 
-        if (string.IsNullOrEmpty(connectionString))
+        if (string.IsNullOrWhiteSpace(connectionString))
         {
             throw new InvalidOperationException("No valid connection string could be found in the app configuration, therefore cannot add the db context to the service collection");
         }
